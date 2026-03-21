@@ -1,14 +1,11 @@
-import os
 from pathlib import Path
 from typing import List
 from langchain_core.documents import Document
 from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
-    UnstructuredMarkdownLoader,
     DirectoryLoader
 )
-from tqdm import tqdm
 import logging
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
