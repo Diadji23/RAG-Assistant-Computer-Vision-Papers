@@ -1,0 +1,12 @@
+services: 
+  app: 
+    build : . 
+    ports : 
+      -"8000:8000"
+    depends_on : 
+      -ollama # je veux que ollama soit pret d abord
+
+  ollama: 
+    image: ollama/ollama 
+    ports:
+      - "11434:11434"
