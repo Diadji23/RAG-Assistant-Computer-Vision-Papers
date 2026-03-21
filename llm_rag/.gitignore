@@ -12,4 +12,4 @@ chroma_db/
 
 # IDE
 .vscode/
-.idea/
+.idea/*.exe
