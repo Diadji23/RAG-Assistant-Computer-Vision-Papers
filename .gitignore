@@ -1,0 +1,17 @@
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+.env/
+
+# Data
+data/raw/
+chroma_db/
+
+# IDE
+.vscode/
+.idea/*.exe
+*.exe
+OllamaSetup.exe:SmartScreen
