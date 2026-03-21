@@ -2,17 +2,19 @@ import os
 from pathlib import Path 
 from typing import List 
 from langchain_core.documents import Document
-
-
 from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
     UnstructuredMarkdownLoader,
     DirectoryLoader
 )
-
 from tqdm import tqdm 
+import logging
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+
+
+logger = logging.getLogger(__name__)
 
 
 class DataLoader: 
@@ -75,11 +77,11 @@ class DataLoader:
 
 
 
-if __name__ == "__main__":
-    loader = DataLoader()
-    docs = loader.load_all_documents()
-    stats = loader.get_document_stats(docs)
-    
-    print("\nStatists:")
-    for key, value in stats.items():
-        print(f"  {key}: {value}")
+    def chunk_documents(self, documents, chunk_size=512, chunk_overlap=50):
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        return splitter.split_documents(documents)
+
+

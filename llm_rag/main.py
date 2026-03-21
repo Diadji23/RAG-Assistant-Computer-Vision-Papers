@@ -1,33 +1,38 @@
-from src.data_loader import DataLoader
-from src.embeddings import MyEmbeddings
+from src.loader import DataLoader
+from src.embedder import MyEmbeddings
 from src.retriever import Retriever
 from src.llm import OllamaLLM
-from src.rag_pipeline import RAGPipeline
+from src.pipeline import RAGPipeline
 
+import logging
+
+
+logger= logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def main():
 
-    print("RAG SYSTEM DEMO - Computer Vision Papers")
-    print("\n[1/4] Loading PDFs")
+    logger.info("RAG SYSTEM DEMO - Computer Vision Papers")
+    logger.info("\n[1/4] Loading PDFs")
     loader = DataLoader(data_dir="data/raw")
     documents = loader.load_pdfs()
-
-    print("\n[2/4] Building vector index")
+    documents = loader.chunk_documents(documents)
+    logger.info("\n[2/4] Building vector index")
     embeddings = MyEmbeddings(model="mxbai-embed-large")
     retriever = Retriever(embeddings)
     retriever.build(documents)
-    print(f"Index built with {len(documents)} chunks")
+    logger.info(f"Index built with {len(documents)} chunks")
     
     
-    print("\n[3/4] Initializing LLM")
+    logger.info("\n[3/4] Initializing LLM")
     llm = OllamaLLM(model="mistral")
     
     # Create pipeline
-    print("\n[4/4] Creating RAG pipeline...")
+    logger.info("\n[4/4] Creating RAG pipeline...")
     rag = RAGPipeline(retriever=retriever, llm=llm)
     
-    print("\n" + "=" * 70)
-    print("READY - Testing with sample questions")
+    logger.info("\n" + "=" * 70)
+    logger.info("READY - Testing with sample questions")
     
     # Test questions
     questions = [
@@ -37,35 +42,35 @@ def main():
     ]
     
     for i, question in enumerate(questions, 1):
-        print(f"\n[Question {i}/{len(questions)}]")
-        print(f"Q: {question}")
-        print("-" * 70)
+        logger.info(f"\n[Question {i}/{len(questions)}]")
+        logger.info(f"Q: {question}")
+        logger.info("-" * 70)
         
         result = rag.run(question, k=3)
         
-        print(f"A: {result['answer']}\n")
-        print(f"Sources: {', '.join(result['sources'])}")
-        print(f"Retrieved: {result['num_sources']} chunks")
-        print("=" * 70)
+        logger.info(f"A: {result['answer']}\n")
+        logger.info(f"Sources: {', '.join(result['sources'])}")
+        logger.info(f"Retrieved: {result['num_sources']} chunks")
+        logger.info("=" * 70)
         
         if i < len(questions):
-            input("\n[Press Enter for next question...]\n")
+            logger.info("\n[Press Enter for next question...]\n")
     
     # Interactive mode
-    print("INTERACTIVE MODE - Type 'quit' to exit")    
+    logger.info("INTERACTIVE MODE - Type 'quit' to exit")    
     while True:
         question = input("\nYour question: ").strip()
         
         if question.lower() in ['quit', 'exit', 'q']:
-            print("Goodbye!")
+            logger.info("Goodbye!")
             break
         
         if not question:
             continue
         
         result = rag.run(question, k=3)
-        print(f"\nAnswer: {result['answer']}")
-        print(f"Sources: {', '.join(result['sources'])}")
+        logger.info(f"\nAnswer: {result['answer']}")
+        logger.info(f"Sources: {', '.join(result['sources'])}")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,10 @@
 import os
 import ollama
-from typing import List
 from dotenv import load_dotenv
+import logging 
+
+logger = logging.getLogger(__name__)
+
 
 load_dotenv()
 
@@ -9,15 +12,11 @@ class OllamaLLM:
     def __init__(self, model: str = None):
         self.model = model or os.getenv("LLM_MODEL", "mistral")
     
-    def generate(self, prompt: str, context: List[str] = None) -> str:
-        if context:
-            context_str = "\n\n".join(context)
-            full_prompt = f"Context:\n{context_str}\n\nQuestion:\n{prompt}\n\nAnswer using only the context."
-        else:
-            full_prompt = prompt
-        
+    def generate(self, prompt: str) -> str:
+       
         try:
-            response = ollama.generate(model=self.model, prompt=full_prompt)
+            response = ollama.generate(model=self.model, prompt=prompt)
             return response.get('response', "")
         except Exception as e:
-            return f"Error: {str(e)}"
+            logger.error(f"Error: {str(e)}")
+            raise

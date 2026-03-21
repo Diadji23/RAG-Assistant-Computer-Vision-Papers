@@ -1,5 +1,9 @@
 from typing import List
-from langchain_core.documents import Document
+import logging 
+
+
+logger = logging.getLogger(__name__)
+
 
 class RAGPipeline:
     def __init__(self, retriever, llm):

@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+
+# RAG / LLM
+openai
+langchain
+chromadb
+
+# HTTP / utils
+httpx
+tiktoken
+
+# optionnel mais utile
+pytest
