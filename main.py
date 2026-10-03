@@ -35,9 +35,16 @@ def main():
     embeddings, llm = get_components()
 
     logger.info("\n[2/4] Building vector index")
-    retriever = Retriever(embeddings)
-    retriever.build(documents)
-    logger.info(f"Index built with {len(documents)} chunks")
+    if os.getenv("RETRIEVER", "chroma") == "azure_search":
+        from src.azure_search_retriever import AzureSearchRetriever
+        retriever = AzureSearchRetriever(embeddings)
+        if retriever.count() == 0:
+            retriever.build(documents)
+        else:
+            logger.info(f"Using existing Azure index: {retriever.count()} docs")
+    else:
+        retriever = Retriever(embeddings)
+        retriever.build(documents)
 
     logger.info("\n[3/4] LLM ready")
 
